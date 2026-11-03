@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>仓库</h1>
+  <p class="sub">原料仓 / 成品仓 / 项目现场仓</p>
+</div>
+<div class="grid2">
+  <section class="card">
+    <h2>仓库列表</h2>
+    <table>
+      <thead><tr><th>编码</th><th>名称</th><th>类型</th></tr></thead>
+      <tbody>
+      {% for w in warehouses %}
+        <tr><td class="mono">{{ w.code }}</td><td>{{ w.name }}</td><td>{{ w.type }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>新增仓库</h2>
+    <form method="post" action="/warehouses" class="form">
+      <div class="row">
+        <label>编码<input name="code" required></label>
+        <label>名称<input name="name" required></label>
+      </div>
+      <label>类型
+        <select name="type">
+          <option value="RAW">原料仓</option>
+          <option value="FINISHED">成品仓</option>
+          <option value="SITE">项目现场仓</option>
+        </select>
+      </label>
+      <button class="btn" type="submit">保存</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

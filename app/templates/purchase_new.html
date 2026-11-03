@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>新建采购单</h1>
+  <p class="sub">审核不改变库存；收货时才写入库存流水</p>
+</div>
+<div class="card" style="max-width:760px">
+  <form method="post" action="/purchase/new" class="form">
+    <div class="row">
+      <label>供应商
+        <select name="partner_id" required>
+          {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>收货仓库
+        <select name="warehouse_id" required>
+          {% for w in warehouses %}<option value="{{ w.id }}">{{ w.name }}（{{ w.code }}）</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <label>明细（每行：物料SKU,数量,单价[,批次号]）
+      <textarea name="lines" placeholder="CELL-182,20000,0.86&#10;GLASS-32,1000,82,BATCH-01"></textarea>
+    </label>
+    <label>备注<input name="remark" placeholder="可选"></label>
+    <button class="btn" type="submit">创建采购单</button>
+  </form>
+</div>
+{% endblock %}

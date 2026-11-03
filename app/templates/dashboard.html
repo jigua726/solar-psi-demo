@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>经营概览</h1>
+  <p class="sub">光伏组件制造 · 工商业分布式项目 · 从原料到项目毛利</p>
+</div>
+
+<div class="grid4">
+  <div class="stat"><div class="label">库存金额</div><div class="value">¥ {{ "%.0f"|format(stats.stock_value) }}</div></div>
+  <div class="stat"><div class="label">物料数量</div><div class="value">{{ stats.product_count }}</div></div>
+  <div class="stat"><div class="label">在制工单</div><div class="value">{{ stats.open_work_orders }}</div></div>
+  <div class="stat"><div class="label">草稿单据</div><div class="value">{{ stats.draft_orders }}</div></div>
+</div>
+
+<div class="grid2 mt">
+  <section class="card">
+    <h2>在制工单</h2>
+    <table>
+      <thead><tr><th>工单号</th><th>成品</th><th class="num">计划数量</th><th>状态</th><th></th></tr></thead>
+      <tbody>
+      {% for wo in wos %}
+        <tr>
+          <td class="mono">{{ wo.wo_no }}</td>
+          <td>{{ wo.product.name if wo.product else '' }}</td>
+          <td class="num">{{ "%.0f"|format(wo.plan_qty) }}</td>
+          <td><span class="badge {{ wo.status|lower }}">{{ wo.status }}</span></td>
+          <td><a href="/work-orders/{{ wo.id }}">查看</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="hint">暂无在制工单</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>最近自动化任务</h2>
+    <table>
+      <thead><tr><th>任务</th><th>结果</th><th class="num">成功/失败</th><th></th></tr></thead>
+      <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td>{{ job.job_type }}<br><span class="hint">{{ job.started_at.strftime('%m-%d %H:%M') }}</span></td>
+          <td><span class="badge {{ job.status|lower }}">{{ job.status }}</span></td>
+          <td class="num">{{ job.success_rows }} / {{ job.failed_rows }}</td>
+          <td><a href="/automation/jobs/{{ job.id }}">详情</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="hint">还没有自动化任务，去「自动化」页面试试生产日报导入</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>销售</h1>
+  <p class="sub">销售单挂项目：草稿 → 审核 → 发货（扣库存、绑序列号、算毛利）</p>
+</div>
+<div class="card">
+  <div class="actions" style="margin:0 0 12px">
+    <a class="btn" href="/sales/new">+ 新建销售单</a>
+  </div>
+  <table>
+    <thead><tr><th>单号</th><th>客户</th><th>项目</th><th>状态</th><th class="num">金额</th><th class="num">成本</th><th></th></tr></thead>
+    <tbody>
+    {% for o in orders %}
+      <tr>
+        <td class="mono">{{ o.order_no }}</td>
+        <td>{{ o.partner.name if o.partner else '' }}</td>
+        <td>{{ o.project.project_no if o.project else '—' }}</td>
+        <td><span class="badge {{ o.status|lower }}">{{ o.status }}</span></td>
+        <td class="num">{{ "%.2f"|format(o.total_amount or 0) }}</td>
+        <td class="num">{{ "%.2f"|format(o.total_cost or 0) }}</td>
+        <td><a href="/sales/{{ o.id }}">查看</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="hint">暂无销售单</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

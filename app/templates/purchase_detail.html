@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>采购单 {{ order.order_no }}</h1>
+  <p class="sub">{{ order.partner.name if order.partner else '' }} · {{ order.warehouse.name if order.warehouse else '' }} · {{ order.order_date }}</p>
+</div>
+
+<div class="card">
+  <table>
+    <thead><tr><th>物料</th><th class="num">数量</th><th class="num">单价</th><th class="num">金额</th><th>批次</th></tr></thead>
+    <tbody>
+    {% for item in order.items %}
+      <tr>
+        <td>{{ item.product.sku }} · {{ item.product.name }}</td>
+        <td class="num">{{ item.qty }}</td>
+        <td class="num">{{ "%.4f"|format(item.unit_price) }}</td>
+        <td class="num">{{ "%.2f"|format(item.amount) }}</td>
+        <td class="mono">{{ item.batch_no or '' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="actions" style="justify-content:space-between">
+    <span>状态：<span class="badge {{ order.status|lower }}">{{ order.status }}</span></span>
+    <span>合计：<strong>¥ {{ "%.2f"|format(order.total_amount or 0) }}</strong></span>
+  </div>
+
+  {% if order.status == 'DRAFT' %}
+  <form method="post" action="/purchase/{{ order.id }}/approve" class="actions">
+    <button class="btn" type="submit">审核通过</button>
+  </form>
+  {% elif order.status == 'APPROVED' %}
+  <form method="post" action="/purchase/{{ order.id }}/receive" class="actions">
+    <button class="btn amber" type="submit">收货入库</button>
+  </form>
+  {% endif %}
+</div>
+
+<p><a href="/purchase">← 返回采购列表</a></p>
+{% endblock %}

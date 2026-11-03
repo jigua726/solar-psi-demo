@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>报表</h1>
+  <p class="sub">项目毛利、工单成本、库存汇总</p>
+</div>
+
+<div class="card">
+  <h2>项目毛利（按项目归集）</h2>
+  <table>
+    <thead><tr><th>项目号</th><th>项目名称</th><th class="num">容量 kW</th><th class="num">收入</th><th class="num">成本</th><th class="num">毛利</th><th class="num">毛利率</th></tr></thead>
+    <tbody>
+    {% for row in margins %}
+      <tr>
+        <td class="mono">{{ row.project_no }}</td>
+        <td>{{ row.project_name }}</td>
+        <td class="num">{{ row.capacity_kw }}</td>
+        <td class="num">{{ "%.2f"|format(row.revenue) }}</td>
+        <td class="num">{{ "%.2f"|format(row.cost) }}</td>
+        <td class="num"><strong>{{ "%.2f"|format(row.margin) }}</strong></td>
+        <td class="num">{{ row.margin_rate }}%</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="hint">还没有已发货的销售单</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>工单成本</h2>
+  <table>
+    <thead><tr><th>工单号</th><th>成品</th><th class="num">计划数量</th><th>状态</th><th class="num">材料</th><th class="num">人工</th><th class="num">制费</th><th class="num">总成本</th><th class="num">单位成本</th></tr></thead>
+    <tbody>
+    {% for row in wo_costs %}
+      <tr>
+        <td class="mono">{{ row.wo_no }}</td>
+        <td>{{ row.product }}</td>
+        <td class="num">{{ "%.0f"|format(row.plan_qty) }}</td>
+        <td><span class="badge {{ row.status|lower }}">{{ row.status }}</span></td>
+        <td class="num">{{ "%.2f"|format(row.material_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(row.labor_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(row.overhead_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(row.total_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(row.unit_cost) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>库存汇总</h2>
+  <table>
+    <thead><tr><th>仓库</th><th>SKU</th><th>商品</th><th class="num">数量</th><th class="num">金额</th></tr></thead>
+    <tbody>
+    {% for row in stock %}
+      <tr>
+        <td>{{ row.warehouse }}</td>
+        <td class="mono">{{ row.sku }}</td>
+        <td>{{ row.product }}</td>
+        <td class="num">{{ "%.4f"|format(row.qty) }} {{ row.unit }}</td>
+        <td class="num">{{ "%.2f"|format(row.amount) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

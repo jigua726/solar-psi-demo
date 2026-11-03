@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>工单 {{ wo.wo_no }}</h1>
+  <p class="sub">{{ wo.product.name if wo.product else '' }} · 计划 {{ "%.0f"|format(wo.plan_qty) }} 块 · 状态 <span class="badge {{ wo.status|lower }}">{{ wo.status }}</span></p>
+</div>
+
+<div class="grid3">
+  <div class="stat"><div class="label">材料成本</div><div class="value">¥ {{ "%.2f"|format(wo.material_cost or 0) }}</div></div>
+  <div class="stat"><div class="label">人工 + 制造费用</div><div class="value">¥ {{ "%.2f"|format((wo.labor_cost or 0) + (wo.overhead_cost or 0)) }}</div></div>
+  <div class="stat"><div class="label">工单总成本</div><div class="value">¥ {{ "%.2f"|format(wo.total_cost or 0) }}</div></div>
+</div>
+
+{% if wo.materials %}
+<div class="card mt">
+  <h2>领料明细（成本归集）</h2>
+  <table>
+    <thead><tr><th>原料</th><th class="num">领用数量</th><th class="num">单位成本</th><th class="num">金额</th></tr></thead>
+    <tbody>
+    {% for m in wo.materials %}
+      <tr>
+        <td>{{ m.material.sku }} · {{ m.material.name }}</td>
+        <td class="num">{{ m.issued_qty }}</td>
+        <td class="num">{{ "%.4f"|format(m.unit_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(m.amount) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if wo.outputs %}
+<div class="card">
+  <h2>完工产出（按功率分档分摊成本）</h2>
+  <table>
+    <thead><tr><th>成品 SKU</th><th class="num">功率 W</th><th class="num">数量</th><th class="num">单位成本</th><th class="num">分摊金额</th></tr></thead>
+    <tbody>
+    {% for o in wo.outputs %}
+      <tr>
+        <td class="mono">{{ o.product.sku if o.product else o.product_id }}</td>
+        <td class="num">{{ o.power_w or '' }}</td>
+        <td class="num">{{ "%.0f"|format(o.qty) }}</td>
+        <td class="num">{{ "%.2f"|format(o.unit_cost) }}</td>
+        <td class="num">{{ "%.2f"|format(o.amount) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if wo.status == 'DRAFT' %}
+<div class="card">
+  <form method="post" action="/work-orders/{{ wo.id }}/release">
+    <button class="btn" type="submit">下达工单</button>
+  </form>
+</div>
+{% elif wo.status == 'RELEASED' %}
+<div class="card">
+  <form method="post" action="/work-orders/{{ wo.id }}/issue">
+    <button class="btn" type="submit">按 BOM 领料</button>
+  </form>
+</div>
+{% elif wo.status == 'ISSUED' %}
+<div class="card">
+  <h2>完工入库（按功率分档）</h2>
+  <form method="post" action="/work-orders/{{ wo.id }}/complete" class="form">
+    <label>产出明细（每行：成品SKU,数量）
+      <textarea name="lines" placeholder="MOD-545,300&#10;MOD-550,400&#10;MOD-555,300"></textarea>
+    </label>
+    <div class="row">
+      <label>人工成本<input name="labor_cost" value="12000"></label>
+      <label>制造费用<input name="overhead_cost" value="8000"></label>
+    </div>
+    <p class="hint">成本按「数量 × 功率」比例分摊到各功率档，尾差挂最后一行；成品会批量生成序列号。</p>
+    <button class="btn amber" type="submit">完工入库</button>
+  </form>
+</div>
+{% endif %}
+
+<p><a href="/work-orders">← 返回工单列表</a></p>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>自动化中心</h1>
+  <p class="sub">生产日报导入：上传车间 Excel/CSV → 自动完工入库 + 生成 SN → 执行日志</p>
+</div>
+
+<div class="grid2">
+  <section class="card">
+    <h2>上传生产日报</h2>
+    <form method="post" action="/automation/upload" enctype="multipart/form-data" class="form">
+      <label>CSV 文件
+        <input type="file" name="file" accept=".csv" required>
+      </label>
+      <button class="btn" type="submit">运行导入</button>
+    </form>
+    <p class="hint">
+      列：wo_no, sku, qty, defect_qty, report_date。<br>
+      演示工单已领料，可直接导入；同一工单只能完工一次。<br>
+      <a href="/api/automation/template">下载模板 CSV</a>
+    </p>
+    <p class="hint">演示文件位置：<span class="mono">samples/production_report.csv</span></p>
+  </section>
+
+  <section class="card">
+    <h2>执行记录</h2>
+    <table>
+      <thead><tr><th>ID</th><th>状态</th><th class="num">成功/失败</th><th>时间</th><th></th></tr></thead>
+      <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td class="mono">#{{ job.id }}</td>
+          <td><span class="badge {{ job.status|lower }}">{{ job.status }}</span></td>
+          <td class="num">{{ job.success_rows }} / {{ job.failed_rows }}</td>
+          <td class="hint">{{ job.started_at.strftime('%m-%d %H:%M:%S') }}</td>
+          <td><a href="/automation/jobs/{{ job.id }}">详情</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="hint">还没有执行记录</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>新建销售单</h1>
+  <p class="sub">项目订单：组件按块卖、按 W 计价；发货时绑定序列号</p>
+</div>
+<div class="card" style="max-width:760px">
+  <form method="post" action="/sales/new" class="form">
+    <div class="row">
+      <label>客户
+        <select name="partner_id" required>
+          {% for c in customers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>项目
+        <select name="project_id">
+          <option value="">— 不指定 —</option>
+          {% for p in projects %}<option value="{{ p.id }}">{{ p.project_no }} · {{ p.name }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <label>发货仓库
+      <select name="warehouse_id" required>
+        {% for w in warehouses %}<option value="{{ w.id }}">{{ w.name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>明细（每行：商品SKU,数量,单价）
+      <textarea name="lines" placeholder="MOD-550,200,429&#10;ESS-100,2,95000"></textarea>
+    </label>
+    <label>备注<input name="remark" placeholder="可选"></label>
+    <button class="btn" type="submit">创建销售单</button>
+  </form>
+</div>
+{% endblock %}

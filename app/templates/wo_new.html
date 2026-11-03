@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>新建生产工单</h1>
+  <p class="sub">领料按 BOM 自动展开，扣减原料库存</p>
+</div>
+<div class="card" style="max-width:760px">
+  <form method="post" action="/work-orders/new" class="form">
+    <div class="row">
+      <label>成品（基准型号）
+        <select name="product_id" required>
+          {% for p in products %}<option value="{{ p.id }}">{{ p.sku }} · {{ p.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>BOM
+        <select name="bom_id" required>
+          {% for b in boms %}<option value="{{ b.id }}">{{ b.product.sku if b.product else b.product_id }} · {{ b.version }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>计划数量<input name="plan_qty" value="1000" required></label>
+      <label>项目（可选）
+        <select name="project_id">
+          <option value="">— 不指定 —</option>
+          {% for p in projects %}<option value="{{ p.id }}">{{ p.project_no }} · {{ p.name }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>领料仓库
+        <select name="material_warehouse_id" required>
+          {% for w in warehouses %}<option value="{{ w.id }}">{{ w.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>成品入库仓库
+        <select name="finished_warehouse_id" required>
+          {% for w in warehouses %}<option value="{{ w.id }}">{{ w.name }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <button class="btn" type="submit">创建工单</button>
+  </form>
+</div>
+{% endblock %}

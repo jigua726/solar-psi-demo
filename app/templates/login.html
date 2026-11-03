@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}登录 · 光伏制造进销存{% endblock %}
+{% block content %}
+<div class="card login-card">
+  <div class="brand-mark">☀</div>
+  <h1>光伏制造 · 轻量 MES + 进销存</h1>
+  <p class="hint">演示账号：<span class="mono">admin / admin123</span></p>
+  <form method="post" action="/login" class="form mt">
+    <label>用户名<input name="username" value="admin" autocomplete="username" required></label>
+    <label>密码<input name="password" type="password" value="admin123" autocomplete="current-password" required></label>
+    <button class="btn" type="submit">登录</button>
+  </form>
+</div>
+{% endblock %}

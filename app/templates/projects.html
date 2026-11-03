@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>项目</h1>
+  <p class="sub">工商业分布式项目；销售单必须挂项目，毛利按项目归集</p>
+</div>
+<div class="grid2">
+  <section class="card">
+    <h2>项目列表</h2>
+    <table>
+      <thead><tr><th>项目号</th><th>名称</th><th class="num">容量 kW</th><th>状态</th></tr></thead>
+      <tbody>
+      {% for p in projects %}
+        <tr>
+          <td class="mono">{{ p.project_no }}</td>
+          <td>{{ p.name }}</td>
+          <td class="num">{{ p.capacity_kw or '' }}</td>
+          <td>{{ p.status }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="hint">暂无项目</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>新增项目</h2>
+    <form method="post" action="/projects" class="form">
+      <div class="row">
+        <label>项目号<input name="project_no" required></label>
+        <label>名称<input name="name" required></label>
+      </div>
+      <label>客户
+        <select name="customer_id">
+          <option value="">— 不指定 —</option>
+          {% for c in customers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <div class="row">
+        <label>容量 kW<input name="capacity_kw" placeholder="500"></label>
+        <label>地址<input name="address"></label>
+      </div>
+      <button class="btn" type="submit">保存</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

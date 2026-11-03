@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>任务 #{{ job.id }}</h1>
+  <p class="sub">{{ job.job_type }} · {{ job.operator }} · {{ job.started_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+</div>
+
+<div class="grid4">
+  <div class="stat"><div class="label">状态</div><div class="value"><span class="badge {{ job.status|lower }}">{{ job.status }}</span></div></div>
+  <div class="stat"><div class="label">总行数</div><div class="value">{{ job.total_rows }}</div></div>
+  <div class="stat"><div class="label">成功</div><div class="value">{{ job.success_rows }}</div></div>
+  <div class="stat"><div class="label">失败</div><div class="value">{{ job.failed_rows }}</div></div>
+</div>
+
+<div class="card mt">
+  <h2>执行信息</h2>
+  <p>{{ job.message or '—' }}</p>
+  <p class="hint">开始：{{ job.started_at }}<br>结束：{{ job.finished_at or '—' }}</p>
+</div>
+
+{% if job.errors %}
+<div class="card">
+  <h2>异常行（可修正后重新导入）</h2>
+  <table>
+    <thead><tr><th>行号</th><th>原始数据</th><th>错误原因</th></tr></thead>
+    <tbody>
+    {% for error in job.errors %}
+      <tr>
+        <td class="num">{{ error.row_no }}</td>
+        <td class="mono hint">{{ error.raw_data }}</td>
+        <td>{{ error.error_message }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<p><a href="/automation">← 返回自动化中心</a></p>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>物料档案</h1>
+  <p class="sub">原料、成品与功率档 SKU；组件按块管理、按 W 计价</p>
+</div>
+<div class="grid2">
+  <section class="card">
+    <h2>物料列表</h2>
+    <table>
+      <thead><tr><th>SKU</th><th>名称</th><th>类别</th><th>单位</th><th class="num">功率/容量</th><th>序列号</th><th class="num">标准成本</th></tr></thead>
+      <tbody>
+      {% for p in products %}
+        <tr>
+          <td class="mono">{{ p.sku }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.category }}</td>
+          <td>{{ p.unit }}</td>
+          <td class="num">{{ p.power_w or p.capacity_kwh or '' }}</td>
+          <td>{{ '是' if p.serial_managed else '' }}</td>
+          <td class="num">{{ "%.2f"|format(p.standard_cost or 0) }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="hint">暂无物料</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>新增物料</h2>
+    <form method="post" action="/products" class="form">
+      <div class="row">
+        <label>SKU<input name="sku" required></label>
+        <label>名称<input name="name" required></label>
+      </div>
+      <div class="row">
+        <label>类别
+          <select name="category">
+            <option value="RAW">原料</option>
+            <option value="FINISHED">成品</option>
+            <option value="SEMI">半成品</option>
+          </select>
+        </label>
+        <label>单位<input name="unit" value="个"></label>
+      </div>
+      <div class="row">
+        <label>单件功率 W<input name="power_w" placeholder="如 550"></label>
+        <label>计量单位<input name="measure_unit" placeholder="W / kWh"></label>
+      </div>
+      <div class="row">
+        <label>标准成本<input name="standard_cost" value="0"></label>
+        <label>质保年限<input name="warranty_years" placeholder="25"></label>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;color:var(--ink)">
+        <input type="checkbox" name="serial_managed" value="1" style="width:auto"> 序列号管理（组件 / 储能）
+      </label>
+      <button class="btn" type="submit">保存物料</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

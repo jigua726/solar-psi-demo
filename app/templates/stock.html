@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>库存</h1>
+  <p class="sub">余额按「仓库 + 商品」；流水是唯一真相；成品按序列号追溯</p>
+</div>
+
+<div class="card">
+  <h2>库存余额</h2>
+  <table>
+    <thead><tr><th>仓库</th><th>SKU</th><th>商品</th><th>类别</th><th class="num">数量</th><th class="num">金额</th><th class="num">移动加权成本</th></tr></thead>
+    <tbody>
+    {% for b in balances %}
+      <tr>
+        <td>{{ b.warehouse }}</td>
+        <td class="mono">{{ b.sku }}</td>
+        <td>{{ b.product }}</td>
+        <td>{{ b.category }}</td>
+        <td class="num">{{ "%.4f"|format(b.qty) }} {{ b.unit }}</td>
+        <td class="num">{{ "%.2f"|format(b.amount) }}</td>
+        <td class="num">{{ "%.4f"|format(b.avg_cost) }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="hint">暂无库存</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="grid2">
+  <section class="card">
+    <h2>最近库存流水</h2>
+    <table>
+      <thead><tr><th>时间</th><th>仓库</th><th>SKU</th><th>方向</th><th class="num">数量</th><th class="num">金额</th><th>业务</th><th>来源</th></tr></thead>
+      <tbody>
+      {% for row in ledger %}
+        <tr>
+          <td class="hint">{{ row.time }}</td>
+          <td>{{ row.warehouse }}</td>
+          <td class="mono">{{ row.sku }}</td>
+          <td>{{ '入' if row.direction == 'IN' else '出' }}</td>
+          <td class="num">{{ "%.4f"|format(row.qty) }}</td>
+          <td class="num">{{ "%.2f"|format(row.amount) }}</td>
+          <td class="hint">{{ row.biz_type }}</td>
+          <td class="mono hint">{{ row.source_no }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="8" class="hint">暂无流水</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>最近序列号</h2>
+    <table>
+      <thead><tr><th>SN</th><th>状态</th><th>质保到期</th></tr></thead>
+      <tbody>
+      {% for s in serials %}
+        <tr>
+          <td class="mono">{{ s.sn }}</td>
+          <td><span class="badge {{ s.status|lower }}">{{ s.status }}</span></td>
+          <td class="hint">{{ s.warranty_end or '' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="hint">暂无序列号</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

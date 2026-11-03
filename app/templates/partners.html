@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>往来单位</h1>
+  <p class="sub">客户（EPC / 业主 / 安装商）与供应商</p>
+</div>
+<div class="grid2">
+  <section class="card">
+    <h2>单位列表</h2>
+    <table>
+      <thead><tr><th>编码</th><th>类型</th><th>名称</th><th>联系人</th><th>电话</th></tr></thead>
+      <tbody>
+      {% for p in partners %}
+        <tr>
+          <td class="mono">{{ p.code }}</td>
+          <td>{{ '客户' if p.type == 'CUSTOMER' else '供应商' }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.contact }}</td>
+          <td>{{ p.phone }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="hint">暂无数据</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>新增往来单位</h2>
+    <form method="post" action="/partners" class="form">
+      <label>类型
+        <select name="type">
+          <option value="CUSTOMER">客户</option>
+          <option value="SUPPLIER">供应商</option>
+        </select>
+      </label>
+      <div class="row">
+        <label>编码<input name="code" required></label>
+        <label>名称<input name="name" required></label>
+      </div>
+      <div class="row">
+        <label>联系人<input name="contact"></label>
+        <label>电话<input name="phone"></label>
+      </div>
+      <label>税号<input name="tax_no"></label>
+      <button class="btn" type="submit">保存</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

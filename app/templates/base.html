@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}光伏制造 · 进销存{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+{% if user %}
+<header class="topbar">
+  <a class="brand" href="/">☀ 光伏制造 · 进销存</a>
+  <nav class="nav">
+    <a href="/">概览</a>
+    <a href="/products">物料</a>
+    <a href="/boms">BOM</a>
+    <a href="/purchase">采购</a>
+    <a href="/work-orders">生产</a>
+    <a href="/sales">销售</a>
+    <a href="/stock">库存</a>
+    <a href="/reports">报表</a>
+    <a href="/automation">自动化</a>
+  </nav>
+  <div class="who">
+    {{ user.full_name or user.username }}<span class="role">{{ user.role }}</span>
+    <a href="/logout">退出</a>
+  </div>
+</header>
+{% endif %}
+<main class="{% if not user %}centered{% endif %}">
+  {% if msg %}<div class="flash ok">{{ msg }}</div>{% endif %}
+  {% if err %}<div class="flash err">{{ err }}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
