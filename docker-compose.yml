@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: "change-me-in-production-32bytes-minimum"
+      DATABASE_URL: "sqlite:////app/data/psi.db"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
